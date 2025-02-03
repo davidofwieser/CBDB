@@ -1,0 +1,75 @@
+version: "3.9"
+services:
+  mysql:
+    image: mysql:latest
+    container_name: my_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=my_source_db
+    networks:
+      - chameleon_net
+    ports:
+      - "3306:3306"
+
+
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:latest
+    container_name: cloudbeaver
+    environment:
+      - CB_SERVER_PORT=8978       # Standardport für CloudBeaver
+      # Je nach Bedarf kannst du weitere Variablen setzen.
+      # Siehe https://hub.docker.com/r/dbeaver/cloudbeaver
+    ports:
+      - "8978:8978"
+    networks:
+      - chameleon_net
+    # Optional: Volume, wenn du z. B. Einstellungen persistent halten willst
+    # volumes:
+    #   - cloudbeaver_data:/opt/cloudbeaver/workspace
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    restart: unless-stopped
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ENABLE_KRAFT: "yes"
+      KAFKA_CFG_NODE_ID: 1
+      KAFKA_CFG_PROCESS_ROLES: "controller,broker"
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_CFG_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093"
+      KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
+      KAFKA_CFG_LOG_DIRS: "/var/lib/kafka/data"
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    networks:
+      - chameleon_net
+
+  
+
+
+  mongo:
+    image: mongo:latest
+    container_name: my_mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=geheimespasswort
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - chameleon_net
+
+
+volumes:
+  mongo_data:
+  kafka-data:
+
+networks:
+  chameleon_net:
+    driver: bridge

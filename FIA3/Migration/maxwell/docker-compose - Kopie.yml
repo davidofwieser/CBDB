@@ -1,0 +1,67 @@
+version: "3.9"
+services:
+  mysql:
+    image: mysql:latest
+    container_name: my_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=my_source_db
+    networks:
+      - chameleon_net
+    ports:
+      - "3306:3306"
+
+
+
+  maxwell:
+    image: zendesk/maxwell
+    container_name: maxwell
+    restart: always
+    command: bin/maxwell --user=root --password=root --host=mysql --producer=stdout
+    depends_on:
+      - mysql  
+
+
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:latest
+    container_name: cloudbeaver
+    environment:
+      - CB_SERVER_PORT=8978       # Standardport für CloudBeaver
+      # Je nach Bedarf kannst du weitere Variablen setzen.
+      # Siehe https://hub.docker.com/r/dbeaver/cloudbeaver
+    ports:
+      - "8978:8978"
+    networks:
+      - chameleon_net
+    # Optional: Volume, wenn du z. B. Einstellungen persistent halten willst
+    # volumes:
+    #   - cloudbeaver_data:/opt/cloudbeaver/workspace
+
+
+
+
+  mongo:
+    image: mongo:latest
+    container_name: my_mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=geheimespasswort
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - chameleon_net
+
+
+
+
+volumes:
+  mongo_data:
+  airbyte_data:
+  airbyte_db_data:
+
+networks:
+  chameleon_net:
+    driver: bridge

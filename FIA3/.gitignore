@@ -1,0 +1,59 @@
+# Bytecode und systembezogene Dateien
+__pycache__/
+*.py[cod]
+*.swp
+.DS_Store
+*.log
+*.out
+
+# Virtuelle Umgebungen
+venv/
+.env/
+*.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Airflow-spezifische Dateien
+airflow.cfg
+unittests.cfg
+webserver_config.py
+logs/
+tmp/
+dag_runs/
+airflow.db
+airflow-worker.pid
+airflow-webserver-monitor.pid
+
+# SQLite-Datenbank (falls verwendet)
+airflow.db
+*.db
+*.db-journal
+
+# Docker-bezogene Dateien
+docker-compose.override.yml
+.envrc
+.dockerignore
+
+# Secrets und Credentials
+secrets/
+keys/
+*.key
+*.pem
+*.crt
+config/secrets.json
+config/*.env
+
+# Jupyter Notebook Checkpoints (falls Jupyter verwendet wird)
+.ipynb_checkpoints/
+
+# PyCharm / VSCode / IDE-Spezifische Dateien
+.idea/
+.vscode/
+*.iml
+
+# Sonstige temporäre oder Build-Dateien
+build/
+dist/
+*.egg-info/
+*.tar.gz
+*.zip
