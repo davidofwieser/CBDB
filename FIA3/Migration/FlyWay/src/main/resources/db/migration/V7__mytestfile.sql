@@ -1,0 +1,1 @@
+ALTER TABLE users ADD phone_number3x INTEGER;
